@@ -1,478 +1,323 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sentient Fan Site - Decentralized AI Infrastructure</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sentient Fan Site - Decentralized AI Infrastructure</title>
+  <style>
+    /* ---------- Reset & Vars ---------- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root{
+      --primary-color: #6366f1;
+      --secondary-color: #8b5cf6;
+      --accent-color: #ec4899;
+      --bg-dark: #0f0f23;
+      --bg-light: #1a1a2e;
+      --text-light: #e2e8f0;
+      --text-dim: #94a3b8;
+      --gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+      --bg-x1: 0px;
+      --bg-x2: 0px;
+      --bg-x3: 0px;
+      --bg-y1: 0px;
+      --bg-y2: 0px;
+      --bg-y3: 0px;
+    }
+    body{
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-light);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-        :root {
-            --primary-color: #6366f1;
-            --secondary-color: #8b5cf6;
-            --accent-color: #ec4899;
-            --bg-dark: #0f0f23;
-            --bg-light: #1a1a2e;
-            --text-light: #e2e8f0;
-            --text-dim: #94a3b8;
-            --gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color), var(--accent-color));
-        }
+    /* ---------- Animated background (pseudo-element uses CSS vars for parallax) ---------- */
+    body::before{
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at calc(20% + var(--bg-x1)) calc(50% + var(--bg-y1)),
+                        rgba(99,102,241,0.10) 0%, transparent 50%),
+        radial-gradient(circle at calc(80% + var(--bg-x2)) calc(80% + var(--bg-y2)),
+                        rgba(139,92,246,0.08) 0%, transparent 50%),
+        radial-gradient(circle at calc(40% + var(--bg-x3)) calc(20% + var(--bg-y3)),
+                        rgba(236,72,153,0.06) 0%, transparent 50%);
+      animation: float 20s ease-in-out infinite;
+      transition: background-position 0.1s linear;
+      opacity: 1;
+    }
+    @keyframes float {
+      0%,100%{ transform: scale(1) translateY(0); }
+      33%{ transform: scale(1.03) translateY(-10px); }
+      66%{ transform: scale(0.98) translateY(6px); }
+    }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: var(--bg-dark);
-            color: var(--text-light);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
+    /* ---------- Layout ---------- */
+    .container{ max-width:1200px; margin:0 auto; padding:0 20px; }
+    header{ padding:2.2rem 0; text-align:center; }
+    .logo{
+      font-size:3.2rem;
+      font-weight:900;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display:inline-block;
+      animation: glow 3s infinite;
+      margin-bottom: 0.6rem;
+    }
+    @keyframes glow { 0%,100%{ filter:brightness(1);} 50%{ filter:brightness(1.16);} }
 
-        /* Animated background */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 40% 20%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
-            z-index: -1;
-            animation: float 20s ease-in-out infinite;
-        }
+    .tagline{ color:var(--text-dim); font-size:1.05rem; }
 
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(-20px, -20px) scale(1.05); }
-            66% { transform: translate(20px, -10px) scale(0.95); }
-        }
+    nav{ display:flex; justify-content:center; gap:1.4rem; margin:2.4rem 0; flex-wrap:wrap; }
+    .nav-link{
+      color:var(--text-light); text-decoration:none; padding:0.6rem 1.2rem; border-radius:28px; position:relative; overflow:hidden;
+      transition: all .25s cubic-bezier(.4,0,.2,1);
+      border:2px solid transparent;
+    }
+    .nav-link::before{
+      content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background:var(--gradient); transition:left .3s; z-index:-1;
+    }
+    .nav-link:hover{ transform:translateY(-3px); border-color: rgba(99,102,241,0.25); box-shadow: 0 8px 20px rgba(0,0,0,.25); }
+    .nav-link:hover::before{ left:0; }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
+    /* ---------- Sections & Cards ---------- */
+    section{ margin:3.5rem 0; }
+    h2{
+      font-size:2.4rem; margin-bottom:1rem; text-align:center;
+      background:var(--gradient); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+    }
+    .card{
+      background: linear-gradient(135deg, var(--bg-light), rgba(99,102,241,0.06));
+      border-radius:18px; padding:1.8rem; margin:1rem 0; border:1px solid rgba(99,102,241,0.12);
+      position:relative; overflow:hidden; transition: all .28s ease;
+    }
+    .card::before{
+      content:''; position:absolute; top:-40%; left:-40%; width:200%; height:200%;
+      background: radial-gradient(circle, rgba(99,102,241,0.06) 0%, transparent 60%); opacity:0; transition:opacity .3s;
+    }
+    .card:hover{ transform:translateY(-6px) scale(1.01); box-shadow: 0 24px 50px rgba(0,0,0,0.35); border-color: rgba(99,102,241,0.2); }
+    .card:hover::before{ opacity:1; }
 
-        /* Header */
-        header {
-            padding: 2rem 0;
-            text-align: center;
-            position: relative;
-        }
+    .features{ display:grid; gap:1.2rem; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); margin-top:1rem; }
+    .feature{ text-align:center; padding:1.2rem; border-radius:12px; background: rgba(99,102,241,0.03); transition:all .2s; }
+    .feature:hover{ transform:translateY(-6px); background: rgba(99,102,241,0.06); }
 
-        .logo {
-            font-size: 3rem;
-            font-weight: 900;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: glow 3s ease-in-out infinite;
-            margin-bottom: 1rem;
-        }
+    .feature-icon{ font-size:2.6rem; margin-bottom:.6rem; display:inline-block; animation:bounce 2s infinite; }
+    @keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);} }
 
-        @keyframes glow {
-            0%, 100% { filter: brightness(1); }
-            50% { filter: brightness(1.2); }
-        }
+    /* ---------- Community buttons & ripple ---------- */
+    .community-links{ display:flex; justify-content:center; gap:1rem; flex-wrap:wrap; margin-top:1rem; }
+    .community-btn{
+      display:inline-block; padding:0.9rem 1.6rem; border-radius:999px; background:var(--gradient); color:white; text-decoration:none;
+      font-weight:600; position:relative; overflow:hidden; border:none; cursor:pointer;
+      transition: transform .18s, box-shadow .18s;
+    }
+    .community-btn:hover{ transform:translateY(-3px); box-shadow: 0 12px 30px rgba(99,102,241,0.28); }
 
-        .tagline {
-            font-size: 1.2rem;
-            color: var(--text-dim);
-            animation: fadeInUp 1s ease-out;
-        }
+    /* ripple style */
+    .ripple{
+      position:absolute; border-radius:50%; background: rgba(255,255,255,0.28);
+      transform: scale(0); pointer-events:none;
+      animation: rippleAnim .6s ease-out forwards;
+    }
+    @keyframes rippleAnim{ to{ transform: scale(1); opacity: 0; } }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+    /* ---------- Footer ---------- */
+    footer{ text-align:center; padding:2.6rem 0; border-top:1px solid rgba(99,102,241,0.12); margin-top:2.2rem; color:var(--text-dim); }
 
-        /* Navigation */
-        nav {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin: 3rem 0;
-            flex-wrap: wrap;
-        }
+    /* ---------- Quiz ---------- */
+    #quiz { text-align:center; margin-top:1rem; }
+    .quiz-question{ margin:1rem 0; font-size:1.12rem; color:var(--text-light); }
+    .quiz-btn{ margin:.45rem; padding:.65rem 1.1rem; border-radius:30px; border:none; cursor:pointer; background:var(--gradient); color:white; font-weight:600; transition:transform .12s; }
+    .quiz-btn:hover{ transform:scale(1.04); }
 
-        .nav-link {
-            color: var(--text-light);
-            text-decoration: none;
-            padding: 0.5rem 1.5rem;
-            border: 2px solid transparent;
-            border-radius: 30px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
+    #quiz-result{ margin-top:1rem; font-size:1.12rem; color:var(--accent-color); font-weight:700; }
 
-        .nav-link::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: var(--gradient);
-            transition: left 0.3s;
-            z-index: -1;
-        }
+    /* ---------- Animations & reveal ---------- */
+    .reveal { opacity: 0; transform: translateY(18px); transition: all .6s cubic-bezier(.2,.9,.3,1); }
+    .reveal.visible { opacity:1; transform: translateY(0); }
 
-        .nav-link:hover {
-            border-color: var(--primary-color);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
-        }
-
-        .nav-link:hover::before {
-            left: 0;
-        }
-
-        /* Sections */
-        section {
-            margin: 4rem 0;
-            animation: fadeIn 1s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        h2 {
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
-            text-align: center;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .card {
-            background: linear-gradient(135deg, var(--bg-light), rgba(99, 102, 241, 0.1));
-            border-radius: 20px;
-            padding: 2rem;
-            margin: 2rem 0;
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .card:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.2);
-            border-color: var(--primary-color);
-        }
-
-        .card:hover::before {
-            opacity: 1;
-        }
-
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin: 2rem 0;
-        }
-
-        .feature {
-            text-align: center;
-            padding: 1.5rem;
-            background: rgba(99, 102, 241, 0.05);
-            border-radius: 15px;
-            transition: all 0.3s ease;
-        }
-
-        .feature:hover {
-            background: rgba(99, 102, 241, 0.1);
-            transform: translateY(-5px);
-        }
-
-        .feature-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            display: inline-block;
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        /* Community section */
-        .community-links {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            flex-wrap: wrap;
-            margin-top: 2rem;
-        }
-
-        .community-btn {
-            display: inline-block;
-            padding: 1rem 2rem;
-            background: var(--gradient);
-            color: white;
-            text-decoration: none;
-            border-radius: 50px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .community-btn::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-
-        .community-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4);
-        }
-
-        .community-btn:active::after {
-            width: 300px;
-            height: 300px;
-        }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 3rem 0;
-            border-top: 1px solid rgba(99, 102, 241, 0.2);
-            margin-top: 4rem;
-            color: var(--text-dim);
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .logo {
-                font-size: 2rem;
-            }
-            
-            h2 {
-                font-size: 1.8rem;
-            }
-            
-            .tagline {
-                font-size: 1rem;
-            }
-            
-            nav {
-                gap: 1rem;
-            }
-        }
-
-        /* Pulse animation for special elements */
-        .pulse {
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-    </style>
+    /* ---------- Responsive ---------- */
+    @media (max-width:768px){
+      .logo{ font-size:2rem; }
+      h2{ font-size:1.6rem; }
+      nav{ gap: .6rem; }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1 class="logo">SENTIENT</h1>
-            <p class="tagline">Building the Future of Decentralized AI Infrastructure</p>
-        </header>
+  <div class="container">
+    <header>
+      <h1 class="logo">SENTIENT</h1>
+      <p class="tagline">Building the future of decentralized AI infrastructure</p>
+    </header>
 
-        <nav>
-            <a href="#about" class="nav-link">About</a>
-            <a href="#features" class="nav-link">Features</a>
-            <a href="#why" class="nav-link">Why Sentient?</a>
-            <a href="#community" class="nav-link">Community</a>
-        </nav>
+    <nav>
+      <a class="nav-link" href="#about">About</a>
+      <a class="nav-link" href="#features">Features</a>
+      <a class="nav-link" href="#why">Why Sentient?</a>
+      <a class="nav-link" href="#quiz">Quiz</a>
+      <a class="nav-link" href="#community">Community</a>
+    </nav>
 
-        <section id="about">
-            <h2>What is Sentient?</h2>
-            <div class="card">
-                <p>Sentient is pioneering the next generation of Web3 infrastructure by creating an open, decentralized platform for artificial intelligence. By leveraging blockchain technology and distributed computing, Sentient enables AI models to be trained, deployed, and accessed in a trustless, permissionless manner.</p>
-                <br>
-                <p>The project aims to democratize AI by removing centralized gatekeepers and creating a global, open marketplace for AI services where developers, researchers, and users can collaborate without barriers.</p>
-            </div>
-        </section>
+    <section id="about" class="reveal">
+      <h2>What is Sentient?</h2>
+      <div class="card">
+        <p>Sentient is pioneering the next generation of Web3 infrastructure by creating an open, decentralized platform for artificial intelligence. By leveraging blockchain and distributed computing, Sentient enables AI models to be trained, deployed, and accessed in a trustless, permissionless way.</p>
+        <p style="margin-top:.8rem;">The goal is to democratize AI — give developers, researchers, and contributors access, ownership, and rewards while preserving privacy and transparency.</p>
+      </div>
+    </section>
 
-        <section id="features">
-            <h2>Core Features</h2>
-            <div class="features">
-                <div class="feature">
-                    <div class="feature-icon">🧠</div>
-                    <h3>Distributed AI Training</h3>
-                    <p>Train models across a decentralized network of compute providers</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">🔗</div>
-                    <h3>Blockchain Integration</h3>
-                    <p>Secure, transparent, and verifiable AI operations on-chain</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">💎</div>
-                    <h3>Token Economy</h3>
-                    <p>Incentivized ecosystem for compute providers and AI developers</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">🌍</div>
-                    <h3>Global Access</h3>
-                    <p>Permissionless access to AI services from anywhere in the world</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">🔒</div>
-                    <h3>Privacy Preserving</h3>
-                    <p>Advanced cryptographic techniques for secure AI operations</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">⚡</div>
-                    <h3>High Performance</h3>
-                    <p>Optimized protocols for efficient distributed computing</p>
-                </div>
-            </div>
-        </section>
+    <section id="features" class="reveal">
+      <h2>Core Features</h2>
+      <div class="features">
+        <div class="feature card"><div class="feature-icon">🧠</div><h3>Distributed AI Training</h3><p>Train models across a decentralized network of compute providers.</p></div>
+        <div class="feature card"><div class="feature-icon">🔗</div><h3>Blockchain Integration</h3><p>Secure, transparent and verifiable AI operations on-chain.</p></div>
+        <div class="feature card"><div class="feature-icon">💎</div><h3>Token Economy</h3><p>Incentivized ecosystem for compute providers and AI developers.</p></div>
+        <div class="feature card"><div class="feature-icon">🌍</div><h3>Global Access</h3><p>Permissionless access to AI services anywhere in the world.</p></div>
+        <div class="feature card"><div class="feature-icon">🔒</div><h3>Privacy Preserving</h3><p>Advanced cryptography and confidential compute for safe AI usage.</p></div>
+        <div class="feature card"><div class="feature-icon">⚡</div><h3>High Performance</h3><p>Optimized protocols for efficient distributed computing.</p></div>
+      </div>
+    </section>
 
-        <section id="why">
-            <h2>Why is it Cool?</h2>
-            <div class="card">
-                <h3 style="color: var(--primary-color); margin-bottom: 1rem;">🚀 Revolutionizing AI Access</h3>
-                <p>Sentient breaks down the walls around AI technology. No more waiting for API access from big tech companies or dealing with restrictive terms of service. The future of AI is open, decentralized, and belongs to everyone.</p>
-            </div>
-            <div class="card">
-                <h3 style="color: var(--secondary-color); margin-bottom: 1rem;">💡 True Innovation</h3>
-                <p>By combining Web3 principles with cutting-edge AI technology, Sentient creates entirely new possibilities. Imagine AI agents that can autonomously transact, models that evolve through community governance, and a global brain powered by millions of contributors.</p>
-            </div>
-            <div class="card">
-                <h3 style="color: var(--accent-color); margin-bottom: 1rem;">🌟 Community Owned</h3>
-                <p>Unlike traditional AI platforms controlled by corporations, Sentient is owned and governed by its community. Every participant has a voice in shaping the future of decentralized AI.</p>
-            </div>
-        </section>
+    <section id="why" class="reveal">
+      <h2>Why is it Cool?</h2>
+      <div class="card">
+        <h3 style="color:var(--primary-color); margin-bottom:.6rem;">🚀 Revolutionizing AI Access</h3>
+        <p>Sentient breaks down walls around AI: no more waiting for limited API keys, no central gatekeepers. Community-driven, open, and permissionless.</p>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--secondary-color); margin-bottom:.6rem;">💡 True Innovation</h3>
+        <p>Imagine AI agents that transact autonomously, models that evolve through community governance, and a global brain powered by millions of contributors.</p>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--accent-color); margin-bottom:.6rem;">🌟 Community Owned</h3>
+        <p>Ownership, governance, and rewards belong to the people building the system — not a remote corporation.</p>
+      </div>
+    </section>
 
-        <section id="community">
-            <h2>Join the Community</h2>
-            <div class="card">
-                <p style="text-align: center; font-size: 1.1rem; margin-bottom: 1.5rem;">
-                    Be part of the revolution. Connect with developers, researchers, and enthusiasts building the future of decentralized AI.
-                </p>
-                <div class="community-links">
-                    <a href="#" class="community-btn pulse">Discord</a>
-                    <a href="#" class="community-btn pulse">Twitter</a>
-                    <a href="#" class="community-btn pulse">GitHub</a>
-                    <a href="#" class="community-btn pulse">Telegram</a>
-                </div>
-            </div>
-        </section>
+    <section id="quiz" class="reveal">
+      <h2>Which Sentient Role Are You?</h2>
+      <div class="card">
+        <p class="quiz-question">Pick the button that matches you the most:</p>
+        <button class="quiz-btn" onclick="showResult('🧪 Scientist — You love experimenting and training models!')">Scientist</button>
+        <button class="quiz-btn" onclick="showResult('🛡️ Guardian — You prioritize privacy & security!')">Guardian</button>
+        <button class="quiz-btn" onclick="showResult('🧭 Explorer — You find new ideas & chains!')">Explorer</button>
+        <button class="quiz-btn" onclick="showResult('🛠️ Builder — You make tools and ship features!')">Builder</button>
 
-        <footer>
-            <p>Made with 💜 by the Sentient Community</p>
-            <p style="margin-top: 0.5rem; font-size: 0.9rem;">Building the decentralized AI future, one block at a time</p>
-        </footer>
-    </div>
+        <div id="quiz-result"></div>
+      </div>
+    </section>
 
-    <script>
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
+    <section id="community" class="reveal">
+      <h2>Join the Community</h2>
+      <div class="card">
+        <p style="text-align:center; font-size:1.05rem;">Be part of the revolution. Connect with developers, researchers, and enthusiasts building the future of decentralized AI.</p>
+        <div class="community-links">
+          <a class="community-btn" href="#" id="discord-btn">Discord</a>
+          <a class="community-btn" href="#" id="twitter-btn">Twitter</a>
+          <a class="community-btn" href="#" id="github-btn">GitHub</a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="reveal">
+      <p>Made with 💜 by the Sentient Community</p>
+      <p style="margin-top:.4rem; font-size:.95rem;">Building the decentralized AI future, one block at a time.</p>
+    </footer>
+  </div>
+
+  <script>
+    /* ------------------ Smooth scrolling ------------------ */
+    document.querySelectorAll('a[href^="#"]').forEach(anchor=>{
+      anchor.addEventListener('click', function(e){
+        e.preventDefault();
+        const tgt = document.querySelector(this.getAttribute('href'));
+        if(tgt) tgt.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    /* ------------------ Parallax-ish background (no pseudo-element selection) ------------------ */
+    (function(){
+      let lastKnownScroll = 0;
+      const throttleMs = 16; // ~60fps updates
+      window.addEventListener('scroll', () => {
+        lastKnownScroll = window.pageYOffset || document.documentElement.scrollTop;
+      });
+      function updateVars() {
+        const s = lastKnownScroll;
+        // small multipliers for subtle effect
+        const x1 = (s * -0.02).toFixed(2) + 'px';
+        const x2 = (s *  0.015).toFixed(2) + 'px';
+        const x3 = (s * -0.012).toFixed(2) + 'px';
+        const y1 = (s * -0.01).toFixed(2) + 'px';
+        const y2 = (s *  0.007).toFixed(2) + 'px';
+        const y3 = (s * -0.006).toFixed(2) + 'px';
+        // set CSS vars on :root (documentElement)
+        document.documentElement.style.setProperty('--bg-x1', x1);
+        document.documentElement.style.setProperty('--bg-x2', x2);
+        document.documentElement.style.setProperty('--bg-x3', x3);
+        document.documentElement.style.setProperty('--bg-y1', y1);
+        document.documentElement.style.setProperty('--bg-y2', y2);
+        document.documentElement.style.setProperty('--bg-y3', y3);
+        requestAnimationFrame(() => {});
+      }
+      // run on an interval for smooth but lightweight updates
+      setInterval(updateVars, throttleMs);
+      // initial call
+      updateVars();
+    })();
+
+    /* ------------------ Intersection Observer for reveal animations ------------------ */
+    (function(){
+      const opts = { threshold: 0.08, rootMargin: '0px 0px -80px 0px' };
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if(entry.isIntersecting) entry.target.classList.add('visible');
         });
+      }, opts);
+      document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+      // also observe cards inside features to slightly delay them
+      document.querySelectorAll('.card').forEach(el => io.observe(el));
+    })();
 
-        // Add parallax effect on scroll
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            const parallax = document.querySelector('body::before');
-            const speed = 0.5;
-            
-            document.body.style.setProperty('--scroll', scrolled * speed + 'px');
-        });
+    /* ------------------ Quiz logic ------------------ */
+    function showResult(text){
+      const res = document.getElementById('quiz-result');
+      res.innerText = text;
+      res.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
 
-        // Add intersection observer for fade-in animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -100px 0px'
-        };
+    /* ------------------ Ripple effect on community buttons ------------------ */
+    document.querySelectorAll('.community-btn').forEach(btn => {
+      btn.addEventListener('click', function(e){
+        // create ripple
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height) * 1.2;
+        const ripple = document.createElement('span');
+        ripple.className = 'ripple';
+        ripple.style.width = ripple.style.height = size + 'px';
+        // position (center at click)
+        const x = e.clientX - rect.left - size/2;
+        const y = e.clientY - rect.top - size/2;
+        ripple.style.left = x + 'px';
+        ripple.style.top = y + 'px';
+        this.appendChild(ripple);
+        // remove after animation
+        setTimeout(()=> { ripple.remove(); }, 650);
+      });
+    });
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
-
-        // Observe all cards and sections
-        document.querySelectorAll('.card, section').forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(20px)';
-            el.style.transition = 'all 0.6s ease-out';
-            observer.observe(el);
-        });
-
-        // Add ripple effect to community buttons
-        document.querySelectorAll('.community-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                const ripple = document.createElement('span');
-                const rect = this.getBoundingClientRect();
-                const size = Math.max(rect.width, rect.height);
-                const x = e.clientX - rect.left - size / 2;
-                const y = e.clientY - rect.top - size / 2;
-                
-                ripple.style.width = ripple.style.height = size + 'px';
-                ripple.style.left = x + 'px';
-                ripple.style.top = y + 'px';
-                ripple.classList.add('ripple');
-                
-                this.appendChild(ripple);
-                
-                setTimeout(() => {
-                    ripple.remove();
-                }, 600);
-            });
-        });
-    </script>
+    /* ------------------ Accessibility: keyboard nav focus outline ------------------ */
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Tab') document.body.classList.add('user-is-tabbing');
+    });
+  </script>
 </body>
 </html>
